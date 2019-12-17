@@ -9,3 +9,6 @@ packages
 pubspec.lock
 example/.dart_tool
 .dart_tool
+.flutter-plugins-dependencies
+flutter_export_environment.sh
+IDEWorkspaceChecks.plist

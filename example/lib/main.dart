@@ -4,9 +4,11 @@ import 'package:flute_music_player/flute_music_player.dart';
 import 'package:flutter/material.dart';
 
 typedef void OnError(Exception exception);
+
 const kUrl = "Any Url Here !";
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
   runApp(new MaterialApp(home: new Scaffold(body: new AudioApp())));
 }
 
@@ -28,12 +30,20 @@ class _AudioAppState extends State<AudioApp> {
   PlayerState playerState = PlayerState.stopped;
 
   get isPlaying => playerState == PlayerState.playing;
+
   get isPaused => playerState == PlayerState.paused;
 
   get durationText =>
-      duration != null ? duration.toString().split('.').first : '';
+      duration != null ? duration
+          .toString()
+          .split('.')
+          .first : '';
+
   get positionText =>
-      position != null ? position.toString().split('.').first : '';
+      position != null ? position
+          .toString()
+          .split('.')
+          .first : '';
 
   bool isMuted = false;
 
@@ -53,11 +63,13 @@ class _AudioAppState extends State<AudioApp> {
     }
 
     print(songs);
-    audioPlayer.setDurationHandler((d) => setState(() {
+    audioPlayer.setDurationHandler((d) =>
+        setState(() {
           duration = d;
         }));
 
-    audioPlayer.setPositionHandler((p) => setState(() {
+    audioPlayer.setPositionHandler((p) =>
+        setState(() {
           position = p;
         }));
 
@@ -82,12 +94,14 @@ class _AudioAppState extends State<AudioApp> {
   }
 
   Future play() async {
-    final result = await audioPlayer.play(kUrl);
-    if (result == 1)
-      setState(() {
-        print('_AudioAppState.play... PlayerState.playing');
-        playerState = PlayerState.playing;
-      });
+    if (kUrl.isNotEmpty) {
+      final result = await audioPlayer.play(kUrl);
+      if (result == 1)
+        setState(() {
+          print('_AudioAppState.play... PlayerState.playing');
+          playerState = PlayerState.playing;
+        });
+    }
   }
 
   Future _playLocal() async {
@@ -105,7 +119,7 @@ class _AudioAppState extends State<AudioApp> {
     if (result == 1)
       setState(() {
         playerState = PlayerState.stopped;
-        position = new Duration();
+        position = new Duration(seconds: 0);
       });
   }
 
@@ -171,68 +185,78 @@ class _AudioAppState extends State<AudioApp> {
             )));
   }
 
-  Widget _buildPlayer() => new Container(
-      padding: new EdgeInsets.all(16.0),
-      child: new Column(mainAxisSize: MainAxisSize.min, children: [
-        new Row(mainAxisSize: MainAxisSize.min, children: [
-          new IconButton(
-              onPressed: isPlaying ? null : () => play(),
-              iconSize: 64.0,
-              icon: new Icon(Icons.play_arrow),
-              color: Colors.cyan),
-          new IconButton(
-              onPressed: isPlaying ? () => pause() : null,
-              iconSize: 64.0,
-              icon: new Icon(Icons.pause),
-              color: Colors.cyan),
-          new IconButton(
-              onPressed: isPlaying || isPaused ? () => stop() : null,
-              iconSize: 64.0,
-              icon: new Icon(Icons.stop),
-              color: Colors.cyan),
-        ]),
-        duration == null
-            ? new Container()
-            : new Slider(
-                value: position?.inMilliseconds?.toDouble() ?? 0,
-                onChanged: (double value) =>
-                    audioPlayer.seek((value / 1000).roundToDouble()),
-                min: 0.0,
-                max: duration.inMilliseconds.toDouble()),
-        new Row(
-          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-          children: <Widget>[
+  Widget _buildPlayer() {
+    var value = position?.inMilliseconds?.toDouble() ?? 0;
+    if (value < 0) {
+      value = 0;
+    }
+    var maxValue = duration?.inMilliseconds?.toDouble() ?? 0;
+    if (maxValue < 0) {
+      maxValue = 0;
+    }
+    return new Container(
+        padding: new EdgeInsets.all(16.0),
+        child: new Column(mainAxisSize: MainAxisSize.min, children: [
+          new Row(mainAxisSize: MainAxisSize.min, children: [
             new IconButton(
-                onPressed: () => mute(true),
-                icon: new Icon(Icons.headset_off),
+                onPressed: isPlaying ? null : () => play(),
+                iconSize: 64.0,
+                icon: new Icon(Icons.play_arrow),
                 color: Colors.cyan),
             new IconButton(
-                onPressed: () => mute(false),
-                icon: new Icon(Icons.headset),
+                onPressed: isPlaying ? () => pause() : null,
+                iconSize: 64.0,
+                icon: new Icon(Icons.pause),
                 color: Colors.cyan),
-          ],
-        ),
-        new Row(mainAxisSize: MainAxisSize.min, children: [
-          new Padding(
-              padding: new EdgeInsets.all(12.0),
-              child: new Stack(children: [
-                new CircularProgressIndicator(
-                    value: 1.0,
-                    valueColor: new AlwaysStoppedAnimation(Colors.grey[300])),
-                new CircularProgressIndicator(
-                  value: position != null && position.inMilliseconds > 0
-                      ? (position?.inMilliseconds?.toDouble() ?? 0.0) /
-                          (duration?.inMilliseconds?.toDouble() ?? 0.0)
-                      : 0.0,
-                  valueColor: new AlwaysStoppedAnimation(Colors.cyan),
-                  backgroundColor: Colors.yellow,
-                ),
-              ])),
-          new Text(
-              position != null
-                  ? "${positionText ?? ''} / ${durationText ?? ''}"
-                  : duration != null ? durationText : '',
-              style: new TextStyle(fontSize: 24.0))
-        ])
-      ]));
+            new IconButton(
+                onPressed: isPlaying || isPaused ? () => stop() : null,
+                iconSize: 64.0,
+                icon: new Icon(Icons.stop),
+                color: Colors.cyan),
+          ]),
+          duration == null
+              ? new Container()
+              : new Slider(
+            value: value,
+            onChanged: (double value) =>
+                audioPlayer.seek((value / 1000).roundToDouble()),
+            min: 0.0,
+            max: maxValue,),
+          new Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: <Widget>[
+              new IconButton(
+                  onPressed: () => mute(true),
+                  icon: new Icon(Icons.headset_off),
+                  color: Colors.cyan),
+              new IconButton(
+                  onPressed: () => mute(false),
+                  icon: new Icon(Icons.headset),
+                  color: Colors.cyan),
+            ],
+          ),
+          new Row(mainAxisSize: MainAxisSize.min, children: [
+            new Padding(
+                padding: new EdgeInsets.all(12.0),
+                child: new Stack(children: [
+                  new CircularProgressIndicator(
+                      value: 1.0,
+                      valueColor: new AlwaysStoppedAnimation(Colors.grey[300])),
+                  new CircularProgressIndicator(
+                    value: position != null && position.inMilliseconds > 0
+                        ? (position?.inMilliseconds?.toDouble() ?? 0.0) /
+                        (duration?.inMilliseconds?.toDouble() ?? 0.0)
+                        : 0.0,
+                    valueColor: new AlwaysStoppedAnimation(Colors.cyan),
+                    backgroundColor: Colors.yellow,
+                  ),
+                ])),
+            new Text(
+                position != null
+                    ? "${positionText ?? ''} / ${durationText ?? ''}"
+                    : duration != null ? durationText : '',
+                style: new TextStyle(fontSize: 24.0))
+          ])
+        ]));
+  }
 }
