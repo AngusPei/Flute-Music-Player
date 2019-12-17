@@ -7,3 +7,5 @@ build/
 ios/.generated/
 packages
 pubspec.lock
+example/.dart_tool
+.dart_tool

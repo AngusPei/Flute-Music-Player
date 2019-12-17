@@ -1,4 +1,5 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.mtechviral.musicfinderexample">
 
     <!-- The INTERNET permission is required for development. Specifically,
@@ -16,7 +17,9 @@
     <application
         android:name="io.flutter.app.FlutterApplication"
         android:label="music_finder_example"
-        android:icon="@mipmap/ic_launcher">
+        android:icon="@mipmap/ic_launcher"
+        tools:replace="android:appComponentFactory,android:icon"
+        android:appComponentFactory="someString">
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop"
