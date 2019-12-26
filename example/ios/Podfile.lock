@@ -1,22 +1,22 @@
 PODS:
-  - Flutter (1.0.0)
-  - music_finder (0.0.1):
+  - flute_music_player (0.0.1):
     - Flutter
+  - Flutter (1.0.0)
 
 DEPENDENCIES:
-  - Flutter (from `Pods/.symlinks/flutter/ios`)
-  - music_finder (from `Pods/.symlinks/plugins/music_finder/ios`)
+  - flute_music_player (from `.symlinks/plugins/flute_music_player/ios`)
+  - Flutter (from `Flutter`)
 
 EXTERNAL SOURCES:
+  flute_music_player:
+    :path: ".symlinks/plugins/flute_music_player/ios"
   Flutter:
-    :path: Pods/.symlinks/flutter/ios
-  music_finder:
-    :path: Pods/.symlinks/plugins/music_finder/ios
+    :path: Flutter
 
 SPEC CHECKSUMS:
-  Flutter: 58dd7d1b27887414a370fcccb9e645c08ffd7a6a
-  music_finder: e52cd58dcff49de8fa868f5c9b752458174192e9
+  flute_music_player: d1518d964a79ddb0c47ce8e50185e041ecd01334
+  Flutter: 0e3d915762c693b495b44d77113d4970485de6ec
 
-PODFILE CHECKSUM: 793ca17cc5488c2bdeb7f2f95b973a070492cf02
+PODFILE CHECKSUM: 8d1568faedcab56a33296f3856ec16c04b2eda64
 
-COCOAPODS: 1.3.1
+COCOAPODS: 1.9.0.beta.2

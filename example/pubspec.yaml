@@ -1,6 +1,8 @@
 name: flute_demo
 description: Demonstrates how to use the flute_music_player plugin.
 
+version: 1.0.0+10001
+
 dependencies:
   flutter:
     sdk: flutter
